@@ -3,81 +3,301 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Next B3A</title>
+<title>B3A · 富泰邨 ⇄ 深圳灣口岸 · live</title>
 <style>
-  body { font-family: system-ui, "Segoe UI", "Microsoft JhengHei", sans-serif; margin: 0;
-         background: #f4f6f8; color: #1f2933; }
-  header { background: #c00000; color: #fff; padding: 16px 24px; }
-  header h1 { margin: 0; font-size: 28px; }
-  header p { margin: 4px 0 0; opacity: .9; }
-  main { display: flex; flex-wrap: wrap; gap: 20px; padding: 24px; }
-  section { flex: 1 1 320px; background: #fff; border-radius: 12px; padding: 18px 22px;
-            box-shadow: 0 1px 4px rgba(0,0,0,.12); }
-  h2 { margin: 0 0 4px; font-size: 20px; color: #1f4e79; }
-  .stop { color: #6b7280; margin: 0 0 14px; }
-  .bus { display: flex; justify-content: space-between; align-items: baseline;
-         border-top: 1px solid #e5e7eb; padding: 10px 0; }
-  .min { font-size: 34px; font-weight: 700; color: #c00000; }
-  .clock { color: #6b7280; }
-  .none { color: #6b7280; padding: 10px 0; }
-  footer { padding: 0 24px 24px; color: #6b7280; font-size: 14px; }
+  :root{
+    --bg:#0b1220;
+    --panel:#111a2b;
+    --card:#151f33;
+    --card-next:#1b2b4a;
+    --line:#26344f;
+    --text:#eaf0fa;
+    --dim:#8ea0bd;
+    --accent:#ffd400;
+    --accent-ink:#1a1400;
+    --ok:#43d17a;
+    --err:#ff6b6b;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:radial-gradient(1200px 700px at 50% -15%,#1a2947 0%,var(--bg) 60%);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",Roboto,sans-serif;
+    display:flex;justify-content:center;
+    padding:26px 18px 34px;
+  }
+  .app{width:100%;max-width:980px;display:flex;flex-direction:column;gap:16px}
+  .grid{display:grid;grid-template-columns:1fr;gap:16px}
+  @media (min-width:880px){ .grid{grid-template-columns:1fr 1fr} }
+
+  /* ---------- panel ---------- */
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:16px;
+    display:flex;flex-direction:column;gap:12px;
+  }
+  .row{display:flex;align-items:center;gap:14px}
+  .route{
+    background:var(--accent);color:var(--accent-ink);
+    font-weight:800;font-size:22px;letter-spacing:.5px;
+    border-radius:11px;padding:7px 12px;line-height:1;flex:none;
+  }
+  .journey{flex:1;min-width:0}
+  .journey .stop{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+  .journey .zh{font-size:17px;font-weight:700}
+  .journey .en{font-size:12px;color:var(--dim)}
+  .arrow{color:var(--accent);font-size:13px;line-height:1.3;padding-left:2px}
+
+  /* ---------- etas ---------- */
+  .etas{display:flex;flex-direction:column;gap:10px;min-height:74px}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:15px;
+    padding:13px 16px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .card.next{background:linear-gradient(180deg,var(--card-next),var(--card));border-color:#3d5688}
+  .num{display:flex;align-items:baseline;gap:5px;min-width:118px}
+  .mins{font-size:42px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-1px}
+  .card.next .mins{color:var(--accent)}
+  .unit{font-size:13px;color:var(--dim);font-weight:600}
+  .mins.arriving{font-size:23px;color:var(--ok);letter-spacing:0}
+  .meta{margin-left:auto;text-align:right}
+  .clock{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+  .rmk{font-size:11.5px;color:var(--accent);margin-top:2px}
+  .empty{
+    border:1px dashed var(--line);border-radius:15px;
+    padding:26px 16px;text-align:center;color:var(--dim);font-size:14px;
+  }
+  .empty.err{color:var(--err);border-color:#4a2b36}
+  .src{
+    font-size:11.5px;color:var(--dim);border-top:1px solid var(--line);
+    padding-top:10px;margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);flex:none;
+       box-shadow:0 0 0 0 rgba(67,209,122,.7);animation:pulse 2s infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 8px rgba(67,209,122,0)}100%{box-shadow:0 0 0 0 rgba(67,209,122,0)}}
+
+  /* ---------- footer ---------- */
+  footer{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    font-size:12.5px;color:var(--dim);flex-wrap:wrap;
+  }
+  #status.err{color:var(--err)}
+  .right{display:flex;align-items:center;gap:10px}
+  #countdown{font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+  button{
+    font:inherit;color:var(--text);background:var(--panel);
+    border:1px solid var(--line);border-radius:999px;padding:5px 14px;cursor:pointer;
+  }
+  button:hover{border-color:#3d5688}
+  button:active{transform:translateY(1px)}
 </style>
 </head>
 <body>
-<header>
-  <h1>Next B3A</h1>
-  <p>Citybus · Lingnan ⇄ Shenzhen Bay Port · 城巴 B3A</p>
-</header>
-<main>
-  <section>
-    <h2>To Shenzhen Bay Port · 往深圳灣口岸</h2>
-    <p class="stop">From Fu Tai Estate, Castle Peak Road · 富泰邨</p>
-    <div id="out">Loading…</div>
-  </section>
-  <section>
-    <h2>To Tuen Mun · 往屯門山景邨</h2>
-    <p class="stop">From Shenzhen Bay Port · 深圳灣口岸</p>
-    <div id="in">Loading…</div>
-  </section>
-</main>
-<footer>Data: Citybus real-time ETA, DATA.GOV.HK · updated <span id="updated">–</span> · refreshes every 30 s</footer>
+<div class="app">
+  <div class="grid">
+
+    <!-- 富泰邨 -> 深圳灣口岸 -->
+    <section class="panel">
+      <div class="row">
+        <div class="route">B3A</div>
+        <div class="journey">
+          <div class="stop"><span class="zh">富泰邨</span><span class="en">Fu Tai Estate</span></div>
+          <div class="arrow">▼</div>
+          <div class="stop"><span class="zh">深圳灣口岸</span><span class="en">Shenzhen Bay Port</span></div>
+        </div>
+      </div>
+      <div class="etas" id="etas-O"><div class="empty">Loading…</div></div>
+      <div class="src"><span class="dot"></span>To Shenzhen Bay Port · stop 003261 (青山公路) · Citybus real-time ETA</div>
+    </section>
+
+    <!-- 深圳灣口岸 -> 富泰 -->
+    <section class="panel">
+      <div class="row">
+        <div class="route">B3A</div>
+        <div class="journey">
+          <div class="stop"><span class="zh">深圳灣口岸</span><span class="en">Shenzhen Bay Port</span></div>
+          <div class="arrow">▼</div>
+          <div class="stop"><span class="zh">富泰</span><span class="en">Fu Tai</span></div>
+        </div>
+      </div>
+      <div class="etas" id="etas-I"><div class="empty">Loading…</div></div>
+      <div class="src"><span class="dot"></span>From Shenzhen Bay Port · stop 003262 (富泰商場 Fu Tai Shopping Centre) · continues to 山景邨 Shan King Estate</div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div id="status">Connecting…</div>
+    <div class="right">
+      <span id="countdown">30s</span>
+      <button id="refresh" type="button">Refresh</button>
+    </div>
+  </footer>
+</div>
+
 <script>
-  // Stop IDs come from /route-stop/CTB/B3A/outbound and /stop/{id}:
-  // 003261 = Fu Tai Estate (outbound, last stop before the port)
-  // 003208 = Shenzhen Bay Port (inbound, first stop)
-  const API = "https://rt.data.gov.hk/v2/transport/citybus/eta/CTB/";
-  const BOARDS = [["out", "003261", "O"], ["in", "003208", "I"]];
+(function () {
+  "use strict";
 
-  async function load(boxId, stop, dir) {
-    const box = document.getElementById(boxId);
-    try {
-      const res = await fetch(API + stop + "/B3A");
-      const data = (await res.json()).data.filter(b => b.dir === dir && b.eta);
-      if (data.length === 0) {
-        box.innerHTML = '<div class="none">No bus in the next hour · 暫時沒有班次</div>';
-        return;
+  // Citybus / DATA.GOV.HK Next Bus ETA — route B3A, one feed per direction.
+  var BASE = "https://rt.data.gov.hk/v2/transport/citybus/eta/CTB/";
+  var REFRESH_MS = 30000;    // refresh every 30 seconds
+  var DROP_AFTER_MS = 60000; // remove a bus once it is 1 min past its ETA
+
+  var DIRECTIONS = [
+    { dir: "O", stop: "003261", el: document.getElementById("etas-O"), buses: [], err: null },
+    { dir: "I", stop: "003262", el: document.getElementById("etas-I"), buses: [], err: null }
+  ];
+
+  var elStatus = document.getElementById("status");
+  var elCountdown = document.getElementById("countdown");
+  var elRefresh = document.getElementById("refresh");
+
+  var lastFetch = 0; // epoch ms of last successful fetch round
+  var nextFetch = 0; // epoch ms when the next refresh is due
+  var loading = false;
+
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  function hhmm(ms) { var d = new Date(ms); return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+  function hhmmss(ms) { var d = new Date(ms); return hhmm(ms) + ":" + pad(d.getSeconds()); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
+    });
+  }
+
+  function url(d) {
+    return BASE + d.stop + "/B3A?dir=" + d.dir;
+  }
+
+  function upcoming(d) {
+    var now = Date.now();
+    return d.buses.filter(function (b) { return b.t > now - DROP_AFTER_MS; });
+  }
+
+  function setStatus(text, isErr) {
+    elStatus.textContent = text;
+    elStatus.classList.toggle("err", !!isErr);
+  }
+
+  // ---- fetch both directions in parallel -----------------------------------
+  function load() {
+    if (loading) return;
+    loading = true;
+    setStatus("Updating…", false);
+
+    var jobs = DIRECTIONS.map(function (d) {
+      return fetch(url(d), { cache: "no-store" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.json();
+        })
+        .then(function (json) {
+          d.buses = (json.data || [])
+            .filter(function (r) { return r && r.dir === d.dir && r.eta; })
+            .sort(function (a, b) { return new Date(a.eta) - new Date(b.eta); })
+            .map(function (r) {
+              return { t: new Date(r.eta).getTime(), rmk: (r.rmk_en || "").trim() };
+            });
+          d.err = null;
+        })
+        .catch(function (err) {
+          d.err = err.message || "request failed";
+          d.buses = [];
+        });
+    });
+
+    Promise.all(jobs).then(function () {
+      lastFetch = Date.now();
+      nextFetch = lastFetch + REFRESH_MS;
+      DIRECTIONS.forEach(render);
+
+      var failed = DIRECTIONS.filter(function (d) { return d.err; }).length;
+      if (failed === DIRECTIONS.length) {
+        setStatus("⚠ Citybus open data unreachable — retrying…", true);
+      } else if (failed) {
+        setStatus("⚠ " + failed + " of " + DIRECTIONS.length + " feeds unavailable — retrying…", true);
+      } else {
+        setStatus("Updated " + hhmmss(lastFetch), false);
       }
-      box.innerHTML = data.map(b => {
-        const t = new Date(b.eta);
-        const min = Math.max(0, Math.round((t - Date.now()) / 60000));
-        const clock = t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit",
-                                                      timeZone: "Asia/Hong_Kong" });
-        const note = b.rmk_en ? " · " + b.rmk_en : "";
-        return `<div class="bus"><span class="min">${min === 0 ? "Arriving" : min + " min"}</span>` +
-               `<span class="clock">${clock}${note}</span></div>`;
-      }).join("");
-    } catch (e) {
-      box.innerHTML = '<div class="none">Cannot reach the data. Check the Wi-Fi.</div>';
-    }
+      loading = false;
+    });
   }
 
-  function refresh() {
-    BOARDS.forEach(b => load(...b));
-    document.getElementById("updated").textContent =
-      new Date().toLocaleTimeString("en-GB", { timeZone: "Asia/Hong_Kong" });
+  // ---- render one direction ------------------------------------------------
+  function render(d) {
+    if (d.err) {
+      d.el.innerHTML = '<div class="empty err">Feed unavailable — ' + esc(d.err) + "</div>";
+      return;
+    }
+
+    var list = upcoming(d);
+    if (!list.length) {
+      d.el.innerHTML = '<div class="empty">No upcoming buses right now.</div>';
+      return;
+    }
+
+    d.el.innerHTML = list.map(function (b, i) {
+      return '<div class="card' + (i === 0 ? " next" : "") + '" data-t="' + b.t + '">' +
+               '<div class="num"><span class="mins">–</span><span class="unit">min</span></div>' +
+               '<div class="meta">' +
+                 '<div class="clock">' + hhmm(b.t) + "</div>" +
+                 (b.rmk ? '<div class="rmk">' + esc(b.rmk) + "</div>" : "") +
+               "</div>" +
+             "</div>";
+    }).join("");
+
+    tick();
   }
-  refresh();
-  setInterval(refresh, 30000);
+
+  // ---- 1 s tick: live minutes, countdown, auto-refresh ----------------------
+  function tick() {
+    var now = Date.now();
+    var cards = document.querySelectorAll(".card");
+
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var t = Number(card.getAttribute("data-t"));
+      var diff = t - now;
+      var minsEl = card.querySelector(".mins");
+      var unitEl = card.querySelector(".unit");
+
+      if (diff <= 0) {
+        minsEl.textContent = "Arriving";
+        minsEl.classList.add("arriving");
+        unitEl.textContent = "";
+      } else {
+        minsEl.classList.remove("arriving");
+        minsEl.textContent = Math.floor(diff / 60000);
+        unitEl.textContent = "min";
+      }
+    }
+
+    var left = Math.max(0, nextFetch - now);
+    elCountdown.textContent = Math.ceil(left / 1000) + "s";
+
+    if (now >= nextFetch) load();
+
+    // prune buses that have just departed, between refreshes
+    DIRECTIONS.forEach(function (d) {
+      if (d.buses.length && !upcoming(d).length) render(d);
+    });
+  }
+
+  elRefresh.addEventListener("click", function () { load(); });
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && Date.now() - lastFetch > 5000) load();
+  });
+
+  load();
+  setInterval(tick, 1000);
+})();
 </script>
 </body>
 </html>
