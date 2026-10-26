@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>B3A · 富泰邨 ⇄ 深圳灣口岸 · live</title>
+<title>B3A &amp; Line 13 · 富泰邨 ⇄ 深圳灣口岸 · live</title>
 <style>
   :root{
     --bg:#0b1220;
@@ -17,6 +17,8 @@
     --accent-ink:#1a1400;
     --ok:#43d17a;
     --err:#ff6b6b;
+    --metro:#5ee0c8;
+    --metro-ink:#04211c;
   }
   *{box-sizing:border-box}
   body{
@@ -96,11 +98,81 @@
   }
   button:hover{border-color:#3d5688}
   button:active{transform:translateY(1px)}
+
+  /* ---------- section headings ---------- */
+  .board{display:flex;flex-direction:column;gap:11px}
+  .board-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:0 4px}
+  .board-head h2{
+    margin:0;font-size:12.5px;font-weight:800;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--text);
+  }
+  .board-head .sub{font-size:12px;color:var(--dim)}
+  .board-head .live{
+    font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ok);background:#0f2a1d;border:1px solid #1f4a33;
+    border-radius:999px;padding:2px 8px;
+  }
+
+  /* ---------- shenzhen metro · line 13 ---------- */
+  .metro{
+    background:var(--panel);border:1px solid var(--line);border-radius:20px;
+    padding:18px 16px 15px;display:flex;flex-direction:column;gap:14px;
+  }
+  .metro-body{display:flex;flex-direction:column;gap:14px}
+  .metro-stop{display:flex;align-items:center;gap:12px}
+  .line-badge{
+    background:var(--metro);color:var(--metro-ink);
+    font-weight:800;font-size:18px;letter-spacing:.02em;
+    border-radius:11px;padding:8px 11px;line-height:1;flex:none;
+  }
+  .metro-stop .zh{font-size:19px;font-weight:800;line-height:1.15}
+  .metro-stop .en{font-size:11.5px;color:var(--dim)}
+  .metro-dir{
+    display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;
+    font-size:14px;font-weight:700;
+  }
+  .metro-dir .to{color:var(--metro);font-size:13px}
+  .metro-dir .en{font-size:11.5px;font-weight:500;color:var(--dim)}
+  .metro-times{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:9px 14px}
+  .stat .k{
+    font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--dim);white-space:nowrap;
+  }
+  .stat .v{
+    font-size:29px;font-weight:800;line-height:1.15;color:var(--metro);
+    font-variant-numeric:tabular-nums;letter-spacing:-.5px;
+  }
+  .cta{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    align-self:flex-start;text-decoration:none;
+    background:var(--metro);color:var(--metro-ink);
+    font-weight:800;font-size:13.5px;line-height:1;
+    border-radius:999px;padding:11px 18px;
+  }
+  .cta:hover{filter:brightness(1.07)}
+  .cta:active{transform:translateY(1px)}
+  .cta:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+  .fineprint{margin:0;padding:0 4px;font-size:11px;line-height:1.55;color:var(--dim)}
+
+  @media (min-width:820px){
+    .metro-body{flex-direction:row;align-items:center;gap:20px}
+    .metro-stop{flex:none;min-width:190px}
+    .metro-dir{flex:1}
+    .metro-times{flex:none;grid-template-columns:auto auto;gap:10px}
+    .cta{flex:none;align-self:center}
+  }
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="grid">
+  <section class="board" aria-labelledby="bus-heading">
+    <div class="board-head">
+      <h2 id="bus-heading">Citybus B3A</h2>
+      <span class="sub">富泰邨 ⇄ 深圳灣口岸</span>
+      <span class="live">live</span>
+    </div>
+    <div class="grid">
 
     <!-- 富泰邨 -> 深圳灣口岸 -->
     <section class="panel">
@@ -130,7 +202,46 @@
       <div class="src"><span class="dot"></span>From Shenzhen Bay Port · stop 003262 (富泰商場 Fu Tai Shopping Centre) · continues to 山景邨 Shan King Estate</div>
     </section>
 
-  </div>
+    </div>
+  </section>
+
+  <!-- Shenzhen Metro Line 13 — static first/last train times, no live data -->
+  <section class="board metro" aria-labelledby="metro-heading">
+    <div class="board-head">
+      <h2 id="metro-heading">Shenzhen Metro · Line 13</h2>
+      <span class="sub">深圳地鐵 13 號線</span>
+    </div>
+
+    <div class="metro-body">
+      <div class="metro-stop">
+        <div class="line-badge">13</div>
+        <div>
+          <div class="zh">高新北</div>
+          <div class="en">Hi-Tech North</div>
+        </div>
+      </div>
+
+      <div class="metro-dir">
+        <span class="to">→</span>深圳灣口岸
+        <span class="en">Shenzhen Bay Checkpoint</span>
+      </div>
+
+      <div class="metro-times">
+        <div class="stat">
+          <div class="k">First train · 首班</div>
+          <div class="v">06:52</div>
+        </div>
+        <div class="stat">
+          <div class="k">Last train · 末班</div>
+          <div class="v">23:22</div>
+        </div>
+      </div>
+
+      <a class="cta" href="https://www.szmc.net/" target="_blank" rel="noopener">Real-time tracking · 實時到站 <span aria-hidden="true">↗</span></a>
+    </div>
+
+    <p class="fineprint">Static first / last train times — no metro data is fetched by this page. Live arrivals are in the official Shenzhen Metro app / WeChat mini-program. B3A connects at the same checkpoint.</p>
+  </section>
 
   <footer>
     <div id="status">Connecting…</div>
